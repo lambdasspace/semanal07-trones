@@ -1,8 +1,11 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
 
 \usepackage{listings}
 \usepackage{color}
+
+\hbadness=99999  % or any number >=10000
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -33,9 +36,83 @@
 
 \maketitle
 
+\section*{Ejercicio 1}
+
+La expresión:
+
+\begin{verbatim}
+(let (sum (lambda (n) (if0 n 0 (+ n (sum (- n 1))))))
+   (sum 5))
+\end{verbatim}
+
+\begin{enumerate}
+    \item \textbf{Expresión:} 
+    Usa \texttt{let} para poder definir \texttt{sum}, una función recursiva que suma los números desde \( n \) hasta \( 0 \). 
+    La función utiliza \texttt{if0}, que va a verificar si \( n \) es igual a \( 0 \). Si sí lo es, entonces va a  devolver \( 0 \) de lo contrario, va a devolver \( n \) más la suma de los números desde \( n-1 \).
+
+    \item \textbf{Ejecución:}
+    Se llama a \( \texttt{(sum 5)} \) pero esto genera un error de variable libre porque \texttt{sum} no está definido dentro del cuerpo de la función lambda. 
+    La función intenta llamar a \texttt{sum} recursivamente, pero no puede encontrar \texttt{sum} en su entorno, ya que no tiene acceso a su propia definición.
+\end{enumerate}
+
+Modificación usando el Combinador de Punto Fijo \( Y \)
+
+Ahora, modificamos la expresión utilizando el Combinador de Punto Fijo \( Y \):
+
+\begin{verbatim}
+(let (Y (lambda (f) ((lambda (x) (f (x x))) (lambda (x) (f (x x))))))
+      (sum (Y (lambda (sum) (lambda (n) (if0 n 0 (+ n (sum (- n 1)))))))))
+   (sum 5))
+\end{verbatim}
+
+\begin{enumerate}
+    \item \textbf{Modificación:}
+    Vamos a definir \( Y \) como el Combinador de Punto Fijo esto porque nos permite que las funciones se llamen a sí mismas.
+    \texttt{sum} se define como la aplicación de \( Y \) a una función que va a tomar como argumento \texttt{sum}. Entonces ahora dentro de la definición de \texttt{sum}, podemos llamar a \texttt{sum} sin que generemos un error de variable libre.
+
+    \item \textbf{Ejecución:}
+    Cuando llamamos a \( \texttt{(sum 5)} \), ahora \texttt{sum} está definido correctamente.
+    La ejecución va a ser de la siguiente manera:
+    \begin{align*}
+        \text{sum(5)} & = 5 + \text{sum(4)} \\
+        \text{sum(4)} & = 4 + \text{sum(3)} \\
+        \text{sum(3)} & = 3 + \text{sum(2)} \\
+        \text{sum(2)} & = 2 + \text{sum(1)} \\
+        \text{sum(1)} & = 1 + \text{sum(0)} \\
+        \text{sum(0)} & = 0 \\
+    \end{align*}
+    Esto se evalúa a \( 5 + 4 + 3 + 2 + 1 + 0 = 15 \).
+\end{enumerate}
+
+\begin{enumerate}
+    \item \textbf{Primera expresión:} Va a generar un error de variable libre porque \texttt{sum} no tiene acceso a su propia definición.
+    \item \textbf{Segunda expresión:} Funciona bien y el resultado de \( \texttt{(sum 5)} \) es \( 15 \), que es la suma de los números del 1 al 5.
+\end{enumerate}
+
+\section{Ejercicio 2}
+
+Evaluar la siguiente expresión en Racket, explicar su resultado y dar la continuación asociada a evaluar usando la notación $\lambda \uparrow$:
+
+\begin{verbatim}
+> (define c #f)
+> (+ 1 (+ 2 (+ 3 (+ (let/cc k (set! c k) 4) 5))))
+> (c 10)
+\end{verbatim}
+
+En la primera línea solamente definimos $c$ como falso. Luego, en la segunda empezamos con la suma, donde la parte más anidada, con el \texttt{let/cc} captura la continuación actual en la variable $k$, la cual se almacena en $c$. Después de esto, se da el valor $4$, así que (+ (\texttt{let/cc} \, k \, (\texttt{set!} \, c \, k) \, 4) \, 5) se evalúa como  (+ 4 \, 5) = 9.
+(+ 3 \, 9) se evalúa como $12$.\\
+(+ 2 \, 12) se evalúa como $14$.\\
+(+ 1 \, 14) se evalúa como $15$.\\
+Por lo tanto, el valor de la segunda línea es $15$.\\
+\newline
+Luego, en la última línea invocamos la continuación almacenada en $c$ que vimos en el paso anterior. Aquí, (c \, 10)  reemplaza la parte donde se evaluaba (+ 4 \, 5) (donde está el \texttt{set!}) por (+ 10 \, 5), que da $15$. Después, la evaluación sigue como antes:
+(+ 3 \, 15) = 18, \quad (+ 2 \, 18) = 20, \quad \text{y finalmente} \quad (+ 1 \, 20) = \textbf{21}.\\
+
+\textbf{Notación $\lambda \uparrow$}: $\lambda(v)=$\texttt{(+ 1 (+ 2 (+ 3 (+ v 5))))}\\
+
 \section*{Ejercicio 3}
 
-Definición de la función recursiva \texttt{ocurrenciasElementos}:
+\subsection*{Definición de la función recursiva \texttt{ocurrenciasElementos}:}
 
 \begin{lstlisting}
 -- Implementacion convencional
@@ -46,12 +123,62 @@ ocurrenciasElementos lista (x:xs) = (x,ocurrencias) : rec
            rec = ocurrenciasElementos lista (filter (/= x) xs)
 \end{lstlisting}
 
-Registros de activación de la función anterior con la llamada:
-\begin{verbatim}
-    ocurrenciasElementos [1,2,3] [1,2]
-\end{verbatim}
-
+\subsection*{Registros de activación}
+Sea la llamada: \texttt{ocurrenciasElementos [1,2,3] [1,2]}\\
+\newline
+Los registros de activación son:\\
+\newline
 Nombre: \texttt{ocurrenciasElementos}\\
-Parametro: \texttt{[1,2,3] [1,2]}\\
+Parámetro: \texttt{[1,2,3] [1,2]}\\
+Nivel: 0\\
+Valor de Retorno: \texttt{(1,1):ocurrenciasElementos [1,2,3] [2]}\\
+\newline
+Nombre: \texttt{ocurrenciasElementos}\\
+Parámetro: \texttt{[1,2,3] [2]}\\
+Nivel: 1\\
+Valor de Retorno: \texttt{(2,1):ocurrenciasElementos [1,2,3] []}\\
+\newline
+Nombre: \texttt{ocurrenciasElementos}\\
+Parametro: \texttt{[1,2,3] []}\\
+Nivel:2\\
+Valor de retorno: \texttt{[]}\\
+\newline
+\subsection*{Nueva Función}
+
+\begin{lstlisting}
+  -- Funcion redefinida con recursion de cola
+  ocurRecurCola :: (Eq a) => [a] -> [a] -> [(a,Int)]
+  ocurRecurCola lista nums = aux lista (reverse nums) []
+    where aux :: (Eq a) => [a] -> [a] -> [(a,Int)] -> [(a,Int)]
+           aux lista [] acc = acc
+           aux lista (x:xs) acc = aux lista filt (elem:acc)
+             where filt = filter (/= x) xs
+                    elem = (x,length (filter (== x) lista))
+\end{lstlisting}
+
+\subsection*{Registros de activación}
+Sea la llamada: \texttt{ocurRecurCola [1,2,3] [1,2]}\\
+\newline
+Los registros de activación son:\\
+\newline
+Nombre: \texttt{ocurRecurCola}\\
+Parámetro: \texttt{[1,2,3] [1,2]}\\
+Nivel: 0\\
+Valor de Retorno: \texttt{aux [1,2,3] [2,1] []}\\
+\newline
+Nombre: \texttt{aux}\\
+Parámetro: \texttt{[1,2,3] [2,1] []}\\
+Nivel: 0\\
+Valor de Retorno: \texttt{aux [1,2,3] [1] [(2,1)]}\\
+\newline
+Nombre: \texttt{aux}\\
+Parametro: \texttt{[1,2,3] [1] [(2,1)]}\\
+Nivel: 0\\
+Valor de retorno: \texttt{[aux [1,2,3] [] [(1,1),(2,1)]]}\\
+\newline
+Nombre: \texttt{aux}\\
+Parámetro: \texttt{[1,2,3] [] [(1,1),(2,1)]}\\
+Nivel: 0\\
+Valor de retorno: \texttt{[(1,1),(2,1)]}\\
 
 \end{document}
