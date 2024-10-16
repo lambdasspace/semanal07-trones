@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\title{Plantilla}
+\author{Fernando Romero Cruz}
+\date{Octubre 2024}
+
+\begin{document}
+
+\maketitle
+
+\section*{Ejercicio 3}
+
+Definición de la función recursiva \texttt{ocurrenciasElementos}:
+
+\begin{lstlisting}
+-- Implementacion convencional
+ocurrenciasElementos :: (Eq a) => [a] -> [a] -> [(a,Int)]
+ocurrenciasElementos lista [] = []
+ocurrenciasElementos lista (x:xs) = (x,ocurrencias) : rec
+    where ocurrencias = length $ filter (== x) lista
+           rec = ocurrenciasElementos lista (filter (/= x) xs)
+\end{lstlisting}
+
+Registros de activación de la función anterior con la llamada:
+\begin{verbatim}
+    ocurrenciasElementos [1,2,3] [1,2]
+\end{verbatim}
+
+Nombre: \texttt{ocurrenciasElementos}\\
+Parametro: \texttt{[1,2,3] [1,2]}\\
+
+\end{document}
