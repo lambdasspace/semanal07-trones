@@ -1,0 +1,28 @@
+Ejercicio 1: (3.5 puntos)
+1. Ejecución de la expresión original (1.5 puntos)
+    * Ejecución (0.5/0.5): Correcto. 
+    * Explicación (0.5/1): Falta profundizar más en la explicación. 
+2. Modificación con el combinador de punto fijo Y (2/2 puntos)
+    * Implementación (1/1): Correcto.
+    * Explicación (1/1): Correcto.
+
+Ejercicio 2: (3 puntos)
+1. Evaluación de la expresión (define c #f) ... (c 10) (1.5 puntos)
+    * Ejecución (0.5/0.5): Correcto.
+    * Explicación (1/1): Correcto.
+2. Explicación de la continuación usando notación λ↑ (1.5/1.5 puntos)
+    * Explicación (1.5/1.5): Correcto.
+
+Ejercicio 3: (3.5 puntos)
+1. Definición de ocurrenciasElementos (1.5 puntos)
+    * Implementación (0.75/0.75): Correcto.
+    * Explicación (0.5/0.75): Más detalle en cómo filter afecta la búsqueda en la lista.
+2. Registros de activación de la versión original (0.75/0.75 puntos)
+    * Representación (0.75/0.75): Correcto.
+3. Optimización con recursión de cola (0.75 puntos)
+    * Implementación (0.5/0.5): Correcto.
+    * Explicación (0.25/0.25): Correcto.
+4. Registros de activación de la versión optimizada (0.5/0.5 puntos)
+    * Representación (0.5/0.5): Correcto.
+
+Calificación: 9.25/10
